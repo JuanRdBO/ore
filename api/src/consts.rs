@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use array_const_fn_init::array_const_fn_init;
 use const_crypto::ed25519;
 use solana_program::{pubkey, pubkey::Pubkey};
@@ -111,15 +113,17 @@ const fn const_bus_address(i: usize) -> Pubkey {
 pub const CONFIG_ADDRESS: Pubkey =
     Pubkey::new_from_array(ed25519::derive_program_address(&[CONFIG], &PROGRAM_ID).0);
 
+pub const METADATA_ID: Pubkey = pubkey!("metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s");
+
 /// The address of the mint metadata account.
 pub const METADATA_ADDRESS: Pubkey = Pubkey::new_from_array(
     ed25519::derive_program_address(
         &[
             METADATA,
-            unsafe { &*(&mpl_token_metadata::ID as *const Pubkey as *const [u8; 32]) },
+            &METADATA_ID.to_bytes(),
             unsafe { &*(&MINT_ADDRESS as *const Pubkey as *const [u8; 32]) },
         ],
-        unsafe { &*(&mpl_token_metadata::ID as *const Pubkey as *const [u8; 32]) },
+        &METADATA_ID.to_bytes(),
     )
     .0,
 );

@@ -50,7 +50,7 @@ pub fn process_initialize<'a, 'info>(
             MINT_ADDRESS.as_ref(),
         ],
         args.metadata_bump,
-        &mpl_token_metadata::ID,
+        &METADATA_ID,
     )?;
     load_uninitialized_pda(
         mint_info,
@@ -68,7 +68,7 @@ pub fn process_initialize<'a, 'info>(
     load_program(system_program, system_program::id())?;
     load_program(token_program, spl_token::id())?;
     load_program(associated_token_program, spl_associated_token_account::id())?;
-    load_program(metadata_program, mpl_token_metadata::ID)?;
+    load_program(metadata_program, METADATA_ID)?;
     load_sysvar(rent_sysvar, sysvar::rent::id())?;
 
     // Check signer.
@@ -165,31 +165,31 @@ pub fn process_initialize<'a, 'info>(
         &[&[MINT, MINT_NOISE.as_slice(), &[args.mint_bump]]],
     )?;
 
-    // Initialize mint metadata.
-    mpl_token_metadata::instructions::CreateMetadataAccountV3Cpi {
-        __program: metadata_program,
-        metadata: metadata_info,
-        mint: mint_info,
-        mint_authority: treasury_info,
-        payer: signer,
-        update_authority: (signer, true),
-        system_program,
-        rent: Some(rent_sysvar),
-        __args: mpl_token_metadata::instructions::CreateMetadataAccountV3InstructionArgs {
-            data: mpl_token_metadata::types::DataV2 {
-                name: METADATA_NAME.to_string(),
-                symbol: METADATA_SYMBOL.to_string(),
-                uri: METADATA_URI.to_string(),
-                seller_fee_basis_points: 0,
-                creators: None,
-                collection: None,
-                uses: None,
-            },
-            is_mutable: true,
-            collection_details: None,
-        },
-    }
-    .invoke_signed(&[&[TREASURY, &[args.treasury_bump]]])?;
+    // // Initialize mint metadata.
+    // mpl_token_metadata::instructions::CreateMetadataAccountV3Cpi {
+    //     __program: metadata_program,
+    //     metadata: metadata_info,
+    //     mint: mint_info,
+    //     mint_authority: treasury_info,
+    //     payer: signer,
+    //     update_authority: (signer, true),
+    //     system_program,
+    //     rent: Some(rent_sysvar),
+    //     __args: mpl_token_metadata::instructions::CreateMetadataAccountV3InstructionArgs {
+    //         data: mpl_token_metadata::types::DataV2 {
+    //             name: METADATA_NAME.to_string(),
+    //             symbol: METADATA_SYMBOL.to_string(),
+    //             uri: METADATA_URI.to_string(),
+    //             seller_fee_basis_points: 0,
+    //             creators: None,
+    //             collection: None,
+    //             uses: None,
+    //         },
+    //         is_mutable: true,
+    //         collection_details: None,
+    //     },
+    // }
+    // .invoke_signed(&[&[TREASURY, &[args.treasury_bump]]])?;
 
     // Initialize treasury token account.
     create_ata(

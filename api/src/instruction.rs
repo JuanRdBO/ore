@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use bytemuck::{Pod, Zeroable};
 use drillx::Solution;
 use num_enum::TryFromPrimitive;
@@ -320,7 +322,7 @@ pub fn initialize(signer: Pubkey) -> Instruction {
             mpl_token_metadata::ID.as_ref(),
             mint_pda.0.as_ref(),
         ],
-        &mpl_token_metadata::ID,
+        &METADATA_ID,
     );
     Instruction {
         program_id: crate::id(),
@@ -342,7 +344,7 @@ pub fn initialize(signer: Pubkey) -> Instruction {
             AccountMeta::new_readonly(system_program::id(), false),
             AccountMeta::new_readonly(spl_token::id(), false),
             AccountMeta::new_readonly(spl_associated_token_account::id(), false),
-            AccountMeta::new_readonly(mpl_token_metadata::ID, false),
+            AccountMeta::new_readonly(METADATA_ID, false),
             AccountMeta::new_readonly(sysvar::rent::id(), false),
         ],
         data: [
